@@ -5,108 +5,310 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DarkTimeDiary</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Mobile-first responsive design */
+    @media (max-width: 640px) {
+      .mobile-padding {
+        margin: 0.5rem;
+        padding: 1rem;
+      }
+      .mobile-text {
+        font-size: 1rem;
+      }
+      .mobile-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+    }
+  </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-black-800 to-black min-h-screen">
-  <!-- Header -->
-  <div class="flex items-center justify-between bg-gray-600 m-10 p-4 rounded-2xl">
+  <!-- Header - Mobile Responsive -->
+  <div class="flex flex-col sm:flex-row items-center justify-between bg-gray-600 m-2 sm:m-10 p-4 rounded-2xl mobile-padding">
     <!-- Logo and Title -->
-    <div class="flex items-center gap-4">
-      <img src="asset/instagram.png" alt="logo" class="h-8 w-8" />
-      <h2 class="text-xl font-extrabold font-mono">DarkTimeDiary</h2>
+    <div class="flex items-center gap-4 mb-4 sm:mb-0">
+      <img src="asset/instagram.png" alt="logo" class="h-6 w-6 sm:h-8 sm:w-8" />
+      <h2 class="text-lg sm:text-xl font-extrabold font-mono text-white mobile-text">DarkTimeDiary</h2>
     </div>
     <!-- Search Bar -->
-    <div>
+    <div class="w-full sm:w-auto">
       <input
         type="text"
-        placeholder="Search..."
-        class="p-3 rounded-3xl border border-gray-600 bg-gray-500 text-gray-800 transition duration-300"
+        id="searchInput"
+        placeholder="Search photos..."
+        class="w-full sm:w-auto p-2 sm:p-3 rounded-full border border-gray-600 bg-gray-500 text-gray-800 transition duration-300 text-sm sm:text-base"
+        onkeyup="searchPhotos()"
       />
     </div>
   </div>
 
-  <!-- Photo Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 p-4 bg-gray-600 rounded-2xl m-10 shadow-lg">
-    <div class="max-w-sm rounded-2xl overflow-hidden shadow-lg bg-gray-300 m-4">
-      <img id="thumbnail" class="w-full h-60 object-cover cursor-pointer" src="https://plus.unsplash.com/premium_photo-1720637776073-9210e0b39e2b?q=80&w=705&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Photography Sample" />
-      <div class="p-4">
-        <h2 class="text-xl font-bold mb-2">Nature in Focus</h2>
-        <p class="text-gray-700 mb-4">A glimpse into the wild — captured during golden hour in the hills of Sylhet.</p>
-        <button onclick="openModal()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-300">
-          View Full Image
-        </button>
-      </div>
+  <!-- Upload Section - Mobile Responsive -->
+  <div class="bg-gray-600 rounded-2xl m-2 sm:m-10 p-4 sm:p-6 shadow-lg mobile-padding">
+    <h3 class="text-white text-lg sm:text-xl font-bold mb-4 mobile-text">Upload Photos</h3>
+    <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
+      <input type="file" id="fileInput" multiple accept="image/*" class="hidden">
+      <button onclick="document.getElementById('fileInput').click()" 
+              class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 mobile-btn">
+        Choose Images
+      </button>
+      <button onclick="uploadImages()" 
+              class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 mobile-btn">
+        Upload Images
+      </button>
     </div>
-    <div class="max-w-sm rounded-2xl overflow-hidden shadow-lg bg-gray-300 m-4">
-      <img id="thumbnail" class="w-full h-60 object-cover cursor-pointer" src="https://images.unsplash.com/photo-1741175363663-b83a99e37685?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Photography Sample" />
-      <div class="p-4">
-        <h2 class="text-xl font-bold mb-2">Nature in Focus</h2>
-        <p class="text-gray-700 mb-4">A glimpse into the wild — captured during golden hour in the hills of Sylhet.</p>
-        <button onclick="openModal()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-300">
-          View Full Image
-        </button>
-      </div>
-    </div>
-    <div class="max-w-sm rounded-2xl overflow-hidden shadow-lg bg-gray-300 m-4">
-      <img id="thumbnail" class="w-full h-60 object-cover cursor-pointer" src="https://plus.unsplash.com/premium_photo-1720637776073-9210e0b39e2b?q=80&w=705&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Photography Sample" />
-      <div class="p-4">
-        <h2 class="text-xl font-bold mb-2">Nature in Focus</h2>
-        <p class="text-gray-700 mb-4">A glimpse into the wild — captured during golden hour in the hills of Sylhet.</p>
-        <button onclick="openModal()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-300">
-          View Full Image
-        </button>
-      </div>
-    </div>
-    <div class="max-w-sm rounded-2xl overflow-hidden shadow-lg bg-gray-300 m-4">
-      <img id="thumbnail" class="w-full h-60 object-cover cursor-pointer" src="https://plus.unsplash.com/premium_photo-1720637776073-9210e0b39e2b?q=80&w=705&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Photography Sample" />
-      <div class="p-4">
-        <h2 class="text-xl font-bold mb-2">Nature in Focus</h2>
-        <p class="text-gray-700 mb-4">A glimpse into the wild — captured during golden hour in the hills of Sylhet.</p>
-        <button onclick="openModal()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-300">
-          View Full Image
-        </button>
-      </div>
-    </div>
-    <div class="max-w-sm rounded-2xl overflow-hidden shadow-lg bg-gray-300 m-4">
-      <img id="thumbnail" class="w-full h-60 object-cover cursor-pointer" src="https://plus.unsplash.com/premium_photo-1720637776073-9210e0b39e2b?q=80&w=705&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Photography Sample" />
-      <div class="p-4">
-        <h2 class="text-xl font-bold mb-2">Nature in Focus</h2>
-        <p class="text-gray-700 mb-4">A glimpse into the wild — captured during golden hour in the hills of Sylhet.</p>
-        <button onclick="openModal()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition duration-300">
-          View Full Image
-        </button>
-      </div>
+    <!-- Preview selected images with title inputs -->
+    <div id="image-preview" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 mt-4">
+      <!-- Selected images will appear here -->
     </div>
   </div>
-  
 
-  <!-- Image Modal -->
-  <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-70">
-    <div class="relative max-w-xl w-full mx-4">
-      <button onclick="closeModal()" class="absolute top-2 right-2 text-white text-3xl font-bold">&times;</button>
-      <img src="https://plus.unsplash.com/premium_photo-1720637776073-9210e0b39e2b?q=80&w=705&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Full Image" class="w-full h-auto rounded-lg shadow-xl" />
-    </div>
+  <!-- Photo Cards Container - Mobile Responsive -->
+  <div id="photo-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 p-2 sm:p-4 bg-gray-600 rounded-2xl m-2 sm:m-10 shadow-lg mobile-padding">
+    <!-- Photos will be dynamically loaded here -->
   </div>
-  <div id="modal2" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-70">
-    <div class="relative max-w-xl w-full mx-4">
-      <button onclick="closeModal()" class="absolute top-2 right-2 text-white text-3xl font-bold">&times;</button>
-      <img src="https://images.unsplash.com/photo-1741175363663-b83a99e37685?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Full Image" class="w-full h-auto rounded-lg shadow-xl" />
+
+  <!-- Single Modal for all images - Mobile Responsive -->
+  <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-80 p-4">
+    <div class="relative w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-3xl">
+      <button onclick="closeModal()" class="absolute -top-8 sm:-top-10 right-0 text-white text-2xl sm:text-3xl font-bold hover:text-gray-300 z-10">&times;</button>
+      <div class="bg-gray-900 rounded-lg overflow-hidden shadow-2xl">
+        <img id="modal-image" src="" alt="Full Image" class="w-full h-auto max-h-[60vh] sm:max-h-[70vh] md:max-h-screen object-contain" />
+        <div class="p-4 sm:p-6">
+          <h3 id="modal-title" class="text-white text-lg sm:text-xl font-bold mb-2"></h3>
+          <p id="modal-caption" class="text-gray-300 text-sm"></p>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- JavaScript -->
   <script>
-    function openModal() {
-      const modal = document.getElementById('modal2');
-      modal.classList.remove('hidden');
-      modal.classList.add('flex');
-    }
+let currentImageSrc = '';
+let selectedFiles = [];
+let allPhotos = []; // Store all photos for searching
 
-    function closeModal() {
-      const modal = document.getElementById('modal2');
-      modal.classList.remove('flex');
-      modal.classList.add('hidden');
+// Handle file selection and show preview
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  const files = Array.from(e.target.files);
+  selectedFiles = files;
+  showImagePreview(files);
+});
+
+// Show preview of selected images with title inputs
+function showImagePreview(files) {
+  const previewContainer = document.getElementById('image-preview');
+  previewContainer.innerHTML = '';
+  
+  files.forEach((file, index) => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const previewCard = document.createElement('div');
+      previewCard.className = 'bg-gray-500 rounded-lg p-2 sm:p-4';
+      previewCard.innerHTML = `
+        <img src="${e.target.result}" alt="Preview" class="w-full h-24 sm:h-32 object-cover rounded-lg mb-2" />
+        <input type="text" 
+               placeholder="Enter image title..." 
+               class="w-full p-2 rounded-lg bg-gray-400 text-gray-800 placeholder-gray-600 text-sm sm:text-base"
+               data-file-index="${index}" 
+               id="title-${index}" />
+        <button onclick="removeImage(${index})" 
+                class="mt-2 bg-red-500 hover:bg-red-600 text-white px-2 sm:px-3 py-1 rounded text-xs sm:text-sm">
+          Remove
+        </button>
+      `;
+      previewContainer.appendChild(previewCard);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// Remove image from selection
+function removeImage(index) {
+  selectedFiles.splice(index, 1);
+  showImagePreview(selectedFiles);
+}
+
+// Search photos function
+function searchPhotos() {
+  const searchInput = document.getElementById('searchInput');
+  const searchTerm = searchInput.value.toLowerCase().trim();
+  
+  if (searchTerm === '') {
+    // Show all photos if search is empty
+    displayPhotos(allPhotos);
+    return;
+  }
+  
+  // Filter photos based on title
+  const filteredPhotos = allPhotos.filter(photo => 
+    photo.title.toLowerCase().includes(searchTerm)
+  );
+  
+  if (filteredPhotos.length > 0) {
+    displayPhotos(filteredPhotos);
+  } else {
+    showNoSearchResults(searchTerm);
+  }
+}
+
+// Show no search results message
+function showNoSearchResults(searchTerm) {
+  const photoContainer = document.getElementById('photo-container');
+  photoContainer.innerHTML = `
+    <div class="col-span-full text-center text-white p-4 sm:p-8">
+      <h3 class="text-xl sm:text-2xl font-bold mb-4">No Results Found</h3>
+      <p class="text-gray-300 mb-4 text-sm sm:text-base">No photos found for "${searchTerm}"</p>
+      <button onclick="clearSearch()" 
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
+        Clear Search
+      </button>
+    </div>
+  `;
+}
+
+// Clear search function
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  displayPhotos(allPhotos);
+}
+
+// Function to fetch uploaded images from server
+async function fetchUploadedImages() {
+  try {
+    const response = await fetch('/api/photos');
+    const data = await response.json();
+    
+    if (data && data.length > 0) {
+      allPhotos = data; // Store all photos for searching
+      displayPhotos(data);
+    } else {
+      allPhotos = [];
+      showNoPhotosMessage();
     }
-  </script>
+  } catch (error) {
+    console.error('Error fetching uploaded photos:', error);
+    allPhotos = [];
+    showNoPhotosMessage();
+  }
+}
+
+// Function to upload images to server
+async function uploadImages() {
+  if (selectedFiles.length === 0) {
+    alert('Please select some images first!');
+    return;
+  }
+  
+  const formData = new FormData();
+  
+  // Add files and their titles to FormData
+  selectedFiles.forEach((file, index) => {
+    const titleInput = document.getElementById(`title-${index}`);
+    const title = titleInput ? titleInput.value.trim() : '';
+    
+    formData.append('images', file);
+    formData.append('titles', title || file.name); // Use filename as fallback
+  });
+  
+  try {
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (response.ok) {
+      alert('Images uploaded successfully!');
+      document.getElementById('fileInput').value = ''; // Clear file input
+      document.getElementById('image-preview').innerHTML = ''; // Clear preview
+      selectedFiles = []; // Clear selected files
+      fetchUploadedImages(); // Refresh the gallery
+    } else {
+      alert('Upload failed!');
+    }
+  } catch (error) {
+    console.error('Error uploading images:', error);
+    alert('Upload failed!');
+  }
+}
+
+// Function to display photos
+function displayPhotos(photos) {
+  const photoContainer = document.getElementById('photo-container');
+  photoContainer.innerHTML = '';
+  
+  photos.forEach((photo, index) => {
+    const photoCard = createPhotoCard(photo, index);
+    photoContainer.appendChild(photoCard);
+  });
+}
+
+// Function to show no photos message
+function showNoPhotosMessage() {
+  const photoContainer = document.getElementById('photo-container');
+  photoContainer.innerHTML = `
+    <div class="col-span-full text-center text-white p-4 sm:p-8">
+      <h3 class="text-xl sm:text-2xl font-bold mb-4">No Photos Yet</h3>
+      <p class="text-gray-300 mb-4 text-sm sm:text-base">Upload some photos to get started!</p>
+      <button onclick="document.getElementById('fileInput').click()" 
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
+        Upload Your First Photo
+      </button>
+    </div>
+  `;
+}
+
+// Function to create photo card - Mobile Responsive
+function createPhotoCard(photo, index) {
+  const card = document.createElement('div');
+  card.className = 'max-w-full sm:max-w-sm rounded-2xl overflow-hidden shadow-lg bg-gray-300 m-1 sm:m-4';
+  
+  card.innerHTML = `
+    <img class="w-full h-40 sm:h-60 object-cover cursor-pointer" 
+         src="${photo.url}" 
+         alt="${photo.title || 'Uploaded Photo'}"
+         onclick="openModal('${photo.url}', '${photo.title || 'Uploaded Photo'}')" />
+    <div class="p-3 sm:p-4">
+      <h2 class="text-lg sm:text-xl font-bold mb-2">${photo.title || 'Photo'}</h2>
+      <p class="text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base">${photo.title || 'No description'}</p>
+      <button onclick="openModal('${photo.url}', '${photo.title || 'Uploaded Photo'}')" 
+              class="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 text-white px-3 sm:px-4 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
+        View Full Image
+      </button>
+    </div>
+  `;
+  
+  return card;
+}
+
+// Modal functions
+function openModal(imageSrc, caption) {
+  currentImageSrc = imageSrc;
+  const modal = document.getElementById('modal');
+  const modalImg = document.getElementById('modal-image');
+  const modalCaption = document.getElementById('modal-caption');
+  const modalTitle = document.getElementById('modal-title');
+  
+  modalImg.src = imageSrc;
+  modalCaption.textContent = caption;
+  modalTitle.textContent = caption;
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeModal() {
+  const modal = document.getElementById('modal');
+  modal.classList.remove('flex');
+  modal.classList.add('hidden');
+}
+
+// Load uploaded photos when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  fetchUploadedImages();
+});
+
+// Touch events for mobile
+document.addEventListener('touchstart', function() {}, true);
+</script>
 
 </body>
 </html>
