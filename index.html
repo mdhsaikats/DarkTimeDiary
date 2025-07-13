@@ -48,11 +48,11 @@
     <div class="flex flex-col sm:flex-row items-center gap-4 mb-4">
       <input type="file" id="fileInput" multiple accept="image/*" class="hidden">
       <button onclick="document.getElementById('fileInput').click()" 
-              class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 mobile-btn">
+              class="w-full sm:w-auto bg-gray-800 hover:bg-gray-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 mobile-btn">
         Choose Images
       </button>
       <button onclick="uploadImages()" 
-              class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 mobile-btn">
+              class="w-full sm:w-auto bg-gray-800 hover:bg-gray-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 mobile-btn">
         Upload Images
       </button>
     </div>
@@ -69,7 +69,7 @@
 
   <!-- Single Modal for all images - Mobile Responsive -->
   <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-80 p-4">
-    <div class="relative w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-3xl">
+    <div class="relative w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-lg">
       <button onclick="closeModal()" class="absolute -top-8 sm:-top-10 right-0 text-white text-2xl sm:text-3xl font-bold hover:text-gray-300 z-10">&times;</button>
       <div class="bg-gray-900 rounded-lg overflow-hidden shadow-2xl">
         <img id="modal-image" src="" alt="Full Image" class="w-full h-auto max-h-[60vh] sm:max-h-[70vh] md:max-h-screen object-contain" />
@@ -108,9 +108,15 @@ function showImagePreview(files) {
         <img src="${e.target.result}" alt="Preview" class="w-full h-24 sm:h-32 object-cover rounded-lg mb-2" />
         <input type="text" 
                placeholder="Enter image title..." 
-               class="w-full p-2 rounded-lg bg-gray-400 text-gray-800 placeholder-gray-600 text-sm sm:text-base"
+               class="w-full p-2 rounded-lg bg-gray-400 text-gray-800 placeholder-gray-600 text-sm sm:text-base mb-2"
                data-file-index="${index}" 
                id="title-${index}" />
+        <textarea 
+               placeholder="Enter image description..." 
+               class="w-full p-2 rounded-lg bg-gray-400 text-gray-800 placeholder-gray-600 text-sm sm:text-base resize-none"
+               rows="2"
+               data-file-index="${index}" 
+               id="description-${index}"></textarea>
         <button onclick="removeImage(${index})" 
                 class="mt-2 bg-red-500 hover:bg-red-600 text-white px-2 sm:px-3 py-1 rounded text-xs sm:text-sm">
           Remove
@@ -141,7 +147,8 @@ function searchPhotos() {
   
   // Filter photos based on title
   const filteredPhotos = allPhotos.filter(photo => 
-    photo.title.toLowerCase().includes(searchTerm)
+    photo.title.toLowerCase().includes(searchTerm) ||
+    (photo.description && photo.description.toLowerCase().includes(searchTerm))
   );
   
   if (filteredPhotos.length > 0) {
@@ -201,13 +208,16 @@ async function uploadImages() {
   
   const formData = new FormData();
   
-  // Add files and their titles to FormData
+  // Add files and their titles and descriptions to FormData
   selectedFiles.forEach((file, index) => {
     const titleInput = document.getElementById(`title-${index}`);
+    const descriptionInput = document.getElementById(`description-${index}`);
     const title = titleInput ? titleInput.value.trim() : '';
+    const description = descriptionInput ? descriptionInput.value.trim() : '';
     
     formData.append('images', file);
     formData.append('titles', title || file.name); // Use filename as fallback
+    formData.append('descriptions', description || 'No description');
   });
   
   try {
@@ -250,7 +260,7 @@ function showNoPhotosMessage() {
       <h3 class="text-xl sm:text-2xl font-bold mb-4">No Photos Yet</h3>
       <p class="text-gray-300 mb-4 text-sm sm:text-base">Upload some photos to get started!</p>
       <button onclick="document.getElementById('fileInput').click()" 
-              class="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
+              class="bg-gray-800 hover:bg-gray-700 text-white px-4 sm:px-6 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
         Upload Your First Photo
       </button>
     </div>
@@ -266,11 +276,11 @@ function createPhotoCard(photo, index) {
     <img class="w-full h-40 sm:h-60 object-cover cursor-pointer" 
          src="${photo.url}" 
          alt="${photo.title || 'Uploaded Photo'}"
-         onclick="openModal('${photo.url}', '${photo.title || 'Uploaded Photo'}')" />
+         onclick="openModal('${photo.url}', '${photo.title || 'Uploaded Photo'}', '${photo.description || 'No description'}')" />
     <div class="p-3 sm:p-4">
       <h2 class="text-lg sm:text-xl font-bold mb-2">${photo.title || 'Photo'}</h2>
-      <p class="text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base">${photo.title || 'No description'}</p>
-      <button onclick="openModal('${photo.url}', '${photo.title || 'Uploaded Photo'}')" 
+      <p class="text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base">${photo.description || 'No description'}</p>
+      <button onclick="openModal('${photo.url}', '${photo.title || 'Uploaded Photo'}', '${photo.description || 'No description'}')" 
               class="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 text-white px-3 sm:px-4 py-2 rounded-lg transition duration-300 text-sm sm:text-base">
         View Full Image
       </button>
@@ -281,7 +291,7 @@ function createPhotoCard(photo, index) {
 }
 
 // Modal functions
-function openModal(imageSrc, caption) {
+function openModal(imageSrc, caption, description) {
   currentImageSrc = imageSrc;
   const modal = document.getElementById('modal');
   const modalImg = document.getElementById('modal-image');
@@ -289,7 +299,7 @@ function openModal(imageSrc, caption) {
   const modalTitle = document.getElementById('modal-title');
   
   modalImg.src = imageSrc;
-  modalCaption.textContent = caption;
+  modalCaption.textContent = description || caption;
   modalTitle.textContent = caption;
   modal.classList.remove('hidden');
   modal.classList.add('flex');

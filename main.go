@@ -16,8 +16,9 @@ import (
 )
 
 type Photo struct {
-	URL   string `json:"url"`
-	Title string `json:"title"`
+	URL         string `json:"url"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }
 
 var db *sql.DB
@@ -46,6 +47,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	files := r.MultipartForm.File["images"]
 	titles := r.MultipartForm.Value["titles"]
+	descriptions := r.MultipartForm.Value["descriptions"]
 	var uploaded []string
 
 	for i, fh := range files {
@@ -64,7 +66,13 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 			title = titles[i]
 		}
 
-		db.Exec("INSERT INTO photos (url, title) VALUES (?, ?)", "/uploads/"+filename, title)
+		// Get description for this image
+		description := "No description" // Default description
+		if i < len(descriptions) && descriptions[i] != "" {
+			description = descriptions[i]
+		}
+
+		db.Exec("INSERT INTO photos (url, title, description) VALUES (?, ?, ?)", "/uploads/"+filename, title, description)
 		uploaded = append(uploaded, filename)
 	}
 
@@ -83,7 +91,7 @@ func photosHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	offset := (page - 1) * limit
 
-	rows, err := db.Query("SELECT url, title FROM photos ORDER BY id DESC LIMIT ? OFFSET ?", limit, offset)
+	rows, err := db.Query("SELECT url, title, description FROM photos ORDER BY id DESC LIMIT ? OFFSET ?", limit, offset)
 	if err != nil {
 		http.Error(w, "Database error", http.StatusInternalServerError)
 		return
@@ -93,7 +101,7 @@ func photosHandler(w http.ResponseWriter, r *http.Request) {
 	var photos []Photo
 	for rows.Next() {
 		var p Photo
-		if err := rows.Scan(&p.URL, &p.Title); err != nil {
+		if err := rows.Scan(&p.URL, &p.Title, &p.Description); err != nil {
 			http.Error(w, "Database error", http.StatusInternalServerError)
 			return
 		}
